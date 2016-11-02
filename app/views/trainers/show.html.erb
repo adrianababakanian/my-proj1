@@ -1,3 +1,64 @@
 <h3>Trainer</h3>
-<p>Name: <%= @trainer.name if @trainer.name %></p>
-<p>Email: <%= @trainer.email if @trainer.email %></p>
+<table style="width:100%">
+  <tr>
+    <th style="padding:20px"> <h5>Name</h5> </th>
+    <th style="padding:20px"> <h5>Email</h5> </th>
+    <th style="padding:20px"> <h5>Pokemons</h5> </th>
+  </tr>
+  <tr>
+    <th style="padding:20px"> <%= @trainer.name if @trainer.name %> </th>
+    <th style="padding: 20px"> <%= @trainer.email if @trainer.email %> </th>
+    <th style="padding:20px">
+      <table style="width:100%">
+        <tr>
+          <th> PokeInfo </th>
+          <th> Damage! </th>
+          <th> Heal! </th>
+        </tr>
+        <% if @pokemons %>
+        <% @pokemons.each do |pokemon| %>
+          <% @name = pokemon.name %>
+          <% @level = pokemon.level %>
+          <% @health = pokemon.health %>
+          <% @trainer_id = pokemon.trainer_id %>
+          <% if @health > 0 %>
+            <tr>
+              <th> <%= "Name is %s, level is %s, health is %s." % [@name, @level, @health]%> </th>
+              <th> <%= button_to "Damage!", damage_path(id: pokemon),
+              :class => "button medium", :method => :patch %> </th>
+            <% else %>
+              <% if current_trainer.id == @trainer_id %>
+                <th><%= "Name is %s, level is %s, health is %s." % [@name, @level, @health]%> </th>
+                <th> <%= button_to "Damage!", damage_path(id: pokemon),
+                :class => "button medium", :method => :patch %> </th>
+              <% end %>
+            <% end %>
+            <% if current_trainer.id == @trainer_id %>
+              <% if @health < 100 %>
+                <th> <%= button_to "Heal!", heal_path(id: pokemon),
+                :class => "button medium", :method => :patch %> </th>
+              <% else %>
+                <th> <%= "This pokemon has full health!" %> </th>
+              <% end %>
+            <% else %>
+              <th> <%= "This isn't your Pokemon! Can't heal." %> </th>
+            <% end %>
+              </tr>
+        <% end %>
+        <% else %>
+          <%= "No pokemons!" %>
+        <% end %>
+      </table>
+    </th>
+  </tr>
+</table>
+
+
+<h3>Create a new Pokemon!</h3>
+
+  <% if (@trainer.name == current_trainer.name) %>
+    <%= button_to "Create!", new_path(id: @pokemon),
+    :class => "button medium", :method => :get %>
+  <% else %>
+    <%= "You can only create Pokemon for yourself!" %>
+  <% end %>
